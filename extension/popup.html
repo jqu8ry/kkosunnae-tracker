@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <title>유설Seol 꼬순내 추적기</title>
+    <link rel="preload" as="font" type="font/ttf" href="fonts/Jua.ttf" crossorigin>
+    <link rel="stylesheet" href="popup.css">
+    <link rel="stylesheet" href="posts.css">
+    <script type="module" src="popup.js"></script>
+    <script type="module" src="mascot.js"></script>
+    <script type="module" src="roulette.js"></script>
+  </head>
+  <body>
+    <main>
+      <header>
+        <div class="brand"><img src="assets/waiting.png" width="38" height="38" alt=""><div><h1>유설Seol 꼬순내 추적기</h1><small id="version"></small></div></div>
+      </header>
+      <nav class="tabs" aria-label="화면 선택">
+        <button id="nav-home" type="button" aria-pressed="true" aria-controls="home-panel">홈</button>
+        <button id="nav-activity" type="button" aria-pressed="false" aria-controls="activity-panel">최근 활동</button>
+        <button id="nav-settings" type="button" aria-pressed="false" aria-controls="settings">설정</button>
+      </nav>
+      <section id="notification-banner" class="notice notification-banner" aria-labelledby="permission-message" hidden>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M5 16c2-2 2-4 2-7a5 5 0 0 1 10 0c0 3 0 5 2 7l1 1H4zM10 20a2.5 2.5 0 0 0 4 0"/></svg>
+        <p id="permission-message"></p>
+        <button id="allow-notifications" type="button">알림 허용</button>
+        <button id="disable-notifications" type="button" hidden>알림 끄기</button>
+        <button id="notification-help" type="button" aria-expanded="false" aria-controls="notification-guide" hidden>설정 확인</button>
+        <p id="notification-guide" hidden>운영체제의 알림 설정에서 Google Chrome을 허용하고 방해 금지 상태를 확인해 주세요.</p>
+      </section>
+      <section id="schedule-recovery" class="notice" aria-label="추적 예약 복구" hidden>
+        <p id="schedule-recovery-status" role="status"></p>
+        <button id="recover-schedule" type="button">지금 복구</button>
+      </section>
+      <section id="home-panel" aria-label="추적 현황">
+      <section id="first-notification" class="tour-card welcome-card" aria-labelledby="first-notification-title" hidden>
+        <h2 id="first-notification-title">Chrome 알림을 켤까요?</h2>
+        <p>놓친 방송과 커뮤니티·디스코드 새 글을 알려드려요.</p>
+        <div class="notice-actions">
+          <button id="first-allow" type="button">알림 켜기</button>
+          <button id="first-later" type="button">나중에</button>
+        </div>
+      </section>
+      <section id="tour-offer" class="tour-card" aria-labelledby="tour-offer-title" hidden>
+        <h2 id="tour-offer-title">추적기가 처음이신가요?</h2>
+        <p>방송을 자동으로 여는 설정과 다시보기를 찾는 곳을 살펴보세요.</p>
+        <div class="tour-actions"><button id="tour-start" type="button">30초 둘러보기</button><button id="tour-dismiss" type="button">건너뛰기</button></div>
+      </section>
+      <section id="tour-card" class="tour-card" aria-labelledby="tour-heading" hidden>
+        <h2 id="tour-heading" tabindex="-1" aria-describedby="tour-description"></h2>
+        <p id="tour-description"></p>
+        <dl id="tour-options" class="guide-facts" hidden></dl>
+        <p id="tour-example" hidden>예시 · 종료된 방송 → 다시보기</p>
+        <div class="tour-actions"><button id="tour-next" type="button">다음</button><button id="tour-skip" type="button">건너뛰기</button></div>
+      </section>
+      <section id="feature-notice" class="tour-card" aria-labelledby="feature-title" hidden>
+        <h2 id="feature-title">최근 활동이 새로워졌어요</h2>
+        <p><strong>소식 바구니</strong>에서 방송·치지직·디스코드 소식을 골라 봐요.</p>
+        <p><strong>나뉜 다시보기</strong>는 1부·2부를 골라 봐요.</p>
+        <div class="notice-actions"><button id="feature-activity" type="button">최근 활동 보기</button><button id="feature-close" type="button">닫기</button></div>
+      </section>
+      <section class="hero" id="hero" aria-labelledby="hero-title" data-state="loading">
+        <div class="hero-copy"><span class="hero-badge"><span class="paw-trail" aria-hidden="true"><i></i><i></i><i></i></span><span id="hero-badge">준비 중</span></span><h2 id="hero-title">추적기를 준비하고 있어요</h2><p id="hero-description">저장된 설정을 불러오고 있어요.</p></div>
+        <div class="hero-art" aria-hidden="true"><img id="hero-mascot" src="assets/paused.png" width="112" height="112" alt=""><span class="chewing-cat"><svg viewBox="23 13 535 602" preserveAspectRatio="xMidYMax meet"><image href="assets/paused.png" width="581" height="637"/></svg></span><span class="live-mascot-slot"></span></div>
+      </section>
+      <nav class="channel-links" aria-label="유설Seol 바로가기">
+        <button id="open-roulette" type="button" aria-haspopup="dialog"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4"/><g fill="currentColor" stroke="none"><circle cx="8" cy="8" r="1.6"/><circle cx="16" cy="8" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="8" cy="16" r="1.6"/><circle cx="16" cy="16" r="1.6"/></g></svg>룰렛 확률표</button>
+        <a href="https://discord.gg/F5ux2qgDSR" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.3 6.8c4.8-2.4 8.6-2.4 13.4 0 1.7 3.1 2.7 6.3 2.6 9.4-1.4 1.2-2.8 1.8-4.6 2.3l-1.3-1.8a12.8 12.8 0 0 1-6.8 0l-1.3 1.8c-1.8-.5-3.2-1.1-4.6-2.3-.1-3.1.9-6.3 2.6-9.4Z"/><circle cx="8.7" cy="12.1" r="1.25" fill="currentColor"/><circle cx="15.3" cy="12.1" r="1.25" fill="currentColor"/></svg>디스코드</a>
+        <a href="https://sopodam.com/creators/yuseol" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.8" y="8.3" width="18.4" height="4.2" rx="1"/><path d="M4.7 12.5v7.2q0 1.1 1.1 1.1h12.4q1.1 0 1.1-1.1v-7.2M12 8.3v12.5M12 8.3C9.5 2.6 5.3 2 5.3 5.3c0 2.4 3.8 3 6.7 3Zm0 0c2.5-5.7 6.7-6.3 6.7-3 0 2.4-3.8 3-6.7 3Z"/></svg>소포담</a>
+      </nav>
+      <div class="tracking-card">
+      <div class="watch-bar">
+        <label class="switch-label" for="enabled">
+          <input id="enabled" type="checkbox" role="switch" disabled>
+          <span>자동 추적</span>
+        </label>
+        <div class="home-actions"><button id="open-live" type="button" aria-expanded="false" aria-controls="live-choices" hidden>방송 열기</button><button id="check" type="button" aria-describedby="check-feedback" disabled><span id="check-caption">지금 확인</span></button></div>
+      </div>
+      <p id="open-feedback" class="feedback" role="status" hidden></p>
+      <div class="check-summary">
+        <p id="check-feedback" class="feedback" role="status" hidden></p>
+        <div id="tracking-options" hidden>
+          <span class="tracking-option">놓친 방송 알림 <span id="missed-summary" class="option-state"></span></span>
+          <span class="tracking-option">커뮤니티·디스코드 추적 <span id="community-on-label" class="option-state" data-on="true" hidden>켜짐</span><button id="allow-community" class="option-state" type="button" title="새 글 알림 켜기" aria-label="커뮤니티·디스코드 추적 꺼짐. 새 글 알림 켜기" hidden>꺼짐</button></span>
+        </div>
+      </div>
+      </div>
+      <div id="live-choices" class="live-choices" role="group" aria-label="방송 열기 방식" hidden>
+        <button id="open-background" type="button"><strong>백그라운드에서 열기</strong><small>지금 보는 화면은 그대로예요.</small></button>
+        <button id="open-foreground" type="button"><strong>방송으로 이동하기</strong><small>방송 탭을 앞으로 가져와요</small></button>
+      </div>
+      <details id="pause-panel" class="pause-panel">
+        <summary>잠시 쉬기 <span id="pause-remaining"></span></summary>
+        <div class="pause-controls">
+          <label for="pause-minutes"><span id="pause-label">중지 시간</span><output id="pause-duration" for="pause-minutes">30분</output></label>
+          <input id="pause-minutes" type="range" min="0" max="360" step="5" value="30" aria-describedby="pause-help">
+          <div class="range-labels"><span>즉시 재개</span><span>6시간</span></div>
+          <fieldset id="pause-entry" aria-label="빠른 시간 선택">
+            <div class="pause-presets">
+              <button type="button" data-minutes="30">30분</button><button type="button" data-minutes="60">1시간</button><button type="button" data-minutes="180">3시간</button><button type="button" data-minutes="360">6시간</button>
+            </div>
+          </fieldset>
+          <div id="pause-notice" class="pause-footer" hidden>
+            <p id="pause-status" role="status"></p>
+            <button id="resume" class="text-button" type="button">지금 재개</button>
+          </div>
+          <p id="pause-help">추적과 알림 재시도를 바로 멈춰요.<br>슬라이더와 방향키로 5분씩 조절해요.</p>
+        </div>
+      </details>
+
+      <section class="report" aria-label="확인 상태">
+        <div class="check-source" aria-labelledby="live-heading">
+          <div class="section-heading">
+            <h2 id="live-heading">방송</h2>
+            <strong class="status" id="status">불러오는 중</strong>
+          </div>
+          <dl>
+            <dt>최근 방송</dt><dd id="latest-live-at">기록 없음</dd>
+            <dt>마지막 확인</dt><dd id="checked-at">기록 없음</dd>
+            <dt>다음 확인</dt><dd id="live-next-at">—</dd>
+          </dl>
+          <p id="error" class="error" hidden></p>
+          <p id="missed-delay" class="error" hidden>놓친 방송 확인 지연</p>
+          <p id="live-opening" role="status" hidden></p>
+          <p id="last-known" hidden></p>
+          <p id="retry-at" hidden></p>
+        </div>
+        <div class="check-source" aria-labelledby="community-heading">
+          <div class="section-heading">
+            <h2 id="community-heading">커뮤니티·디스코드</h2>
+            <strong class="status" id="community-status">불러오는 중</strong>
+          </div>
+          <dl>
+            <dt>최근 글</dt><dd id="latest-post-at">기록 없음</dd>
+            <dt>마지막 확인</dt><dd id="community-checked-at">기록 없음</dd>
+            <dt>다음 확인</dt><dd id="community-next-at">—</dd>
+          </dl>
+          <p id="community-error" class="error" hidden></p>
+          <p id="community-retry-at" hidden></p>
+          <p id="community-auto-retry" hidden></p>
+        </div>
+      </section>
+      <button id="activity-preview" class="activity-preview" type="button"><span class="preview-label">최근 활동 <span aria-hidden="true">›</span></span><span id="activity-summary">기록된 활동이 없습니다.</span></button>
+      </section>
+      <template id="chzzk-mark"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="1" y="1" width="22" height="22" rx="6" fill="#182625"/><path fill="#00ffa3" d="M11 4h8l-5.7 6.2H19L7 21l3.1-8H5z"/></svg></template>
+      <template id="discord-mark"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="1" y="1" width="22" height="22" rx="6" fill="#5865f2"/><path fill="#fff" d="M6.5 7.4 10 6.5l.5 1a12 12 0 0 1 3 0l.5-1 3.5.9c1.5 2.5 2.5 5.4 2.4 8.2a11 11 0 0 1-4.1 2l-1-1.4a10 10 0 0 1-5.6 0l-1 1.4a11 11 0 0 1-4.1-2c-.1-2.8.9-5.7 2.4-8.2Z"/><g fill="#5865f2"><ellipse cx="9.4" cy="12.7" rx="1.45" ry="1.7"/><ellipse cx="14.6" cy="12.7" rx="1.45" ry="1.7"/></g></svg></template>
+      <section id="activity-panel" class="activity" aria-labelledby="nav-activity" hidden>
+        <section id="week-card" aria-labelledby="week-heading">
+          <div class="section-heading"><h2 id="week-heading" tabindex="-1">이번 주 방송 발자국</h2>
+            <div class="week-picker" role="group" aria-label="표시할 주">
+              <button id="week-previous" type="button" aria-pressed="false" aria-controls="week-days">지난주</button>
+              <button id="week-current" type="button" aria-pressed="true" aria-controls="week-days">이번 주</button>
+            </div>
+          </div>
+          <small id="week-range"></small>
+          <div id="week-days"></div>
+          <dialog id="week-dialog" class="selection-dialog" aria-labelledby="week-list-title"><div class="section-heading"><h2 id="week-list-title">방송 목록</h2><button type="button" id="week-close">닫기</button></div><div id="week-choices" hidden></div><p id="week-list-status" role="status"></p></dialog>
+          <p class="film-note">발자국은 방송 시작일, 필름은 클립을 만든 날에 표시해요(한국시간).<br>필름을 누르면 그날 만든 클립을 볼 수 있어요. 지난 방송의 클립도 포함돼요.</p>
+          <p id="week-clip-status" role="status" hidden></p>
+          <p id="week-note" hidden>‘준비 중’은 방송이 끝난 뒤 다시보기 링크를 기다리는 상태예요.</p>
+          <p id="week-status" role="status" hidden></p>
+        </section>
+        <section id="news-basket" aria-labelledby="basket-label">
+          <div class="basket-head">
+            <h3 id="basket-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 9 4-6m6 6-4-6M2.5 9.5h19l-2.3 9a2 2 0 0 1-2 1.5H6.8a2 2 0 0 1-2-1.5zM9 13v3m6-3v3"/></svg>소식 바구니</h3>
+            <button id="basket-errors" type="button" data-source="failure" aria-controls="activity-list" aria-pressed="false" hidden>알림 오류</button>
+          </div>
+          <div class="basket-sources" role="group" aria-labelledby="basket-label">
+            <button id="basket-all" type="button" data-source="all" aria-controls="activity-list" aria-pressed="true">전체</button>
+            <button type="button" data-source="broadcast" aria-controls="activity-list" aria-pressed="false"><i class="basket-paw" aria-hidden="true"></i>방송</button>
+            <button type="button" data-source="post" aria-controls="activity-list" aria-pressed="false">치지직</button>
+            <button type="button" data-source="discord" aria-controls="activity-list" aria-pressed="false">디스코드</button>
+          </div>
+        </section>
+        <p id="notification-retry-at" role="status" hidden></p>
+        <div id="basket-results">
+          <p id="activity-empty" hidden>아직 발견한 소식이 없어요</p>
+          <ol id="activity-list" hidden></ol>
+          <button id="activity-more" aria-controls="activity-list" type="button" hidden>더 보기</button>
+        </div>
+      </section>
+
+      <details id="settings" hidden>
+        <summary>설정</summary>
+        <h2>설정</h2>
+        <fieldset id="controls" disabled>
+          <div class="settings-card">
+          <label class="row" for="theme">
+            <span>화면 모드</span>
+            <select id="theme">
+              <option value="auto">Chrome 설정 따르기</option>
+              <option value="light">라이트</option>
+              <option value="dark">다크</option>
+            </select>
+          </label>
+          <label class="row" for="interval">
+            <span>방송 확인 주기</span>
+            <select id="interval"></select>
+          </label>
+          <label class="row" for="community-interval">
+            <span>커뮤니티·디스코드 확인 주기</span>
+            <select id="community-interval"></select>
+          </label>
+          <label class="row" for="broadcast-mode">
+            <span>방송을 감지하면</span>
+            <select id="broadcast-mode" aria-describedby="broadcast-mode-help"></select>
+          </label>
+          </div>
+          <p class="settings-help" id="broadcast-mode-help"></p>
+          <p class="settings-help">받을 알림을 각각 선택하세요.</p>
+          <div class="settings-card notification-options">
+          <label class="row" id="background-banner-option" for="notify-live" hidden>
+            <span>탭을 열 때 알림도 받기</span>
+            <input id="notify-live" type="checkbox" role="switch" disabled>
+          </label>
+          <label class="row" for="notify-missed">
+            <span>놓친 방송 알림<small>Chrome 종료·절전 중 끝난 방송을 알려요.</small></span>
+            <input id="notify-missed" type="checkbox" role="switch" disabled>
+          </label>
+          <label class="row" for="community">
+            <span>커뮤니티·디스코드 새 글 알림<small>치지직 커뮤니티와 디스코드 두 채널의 글을 알려요.</small></span>
+            <input id="community" type="checkbox" role="switch" disabled>
+          </label>
+          </div>
+          <p id="discord-state" class="settings-help" hidden></p>
+          <div class="settings-actions">
+            <button id="preview-live" type="button" aria-haspopup="dialog">상태 미리보기</button>
+            <button id="test-notification" type="button" disabled>테스트 알림</button>
+            <button id="reset-settings" type="button" aria-haspopup="dialog" disabled>기본값으로 초기화</button>
+          </div>
+        </fieldset>
+        <button id="tour-replay" class="text-button" type="button">가이드 다시보기</button>
+      </details>
+      <template id="live-mascot-template"><span class="waving-cat"><svg viewBox="-12 105 605 431" preserveAspectRatio="xMidYMax meet"><image href="assets/live.png" width="581" height="637"/></svg></span></template>
+      <dialog id="live-preview" aria-labelledby="live-preview-title">
+        <h2 id="live-preview-title">상태 미리보기</h2>
+        <div class="preview-modes" role="group" aria-label="미리 볼 방송 상태">
+          <label><input type="radio" name="preview-mode" value="waiting">추적 중</label>
+          <label><input type="radio" name="preview-mode" value="live" checked>LIVE</label>
+        </div>
+        <div class="hero" data-state="waiting" hidden><div class="hero-copy"><span class="hero-badge"><span class="paw-trail" aria-hidden="true"><i></i><i></i><i></i></span>추적 중</span><h2>방송을 기다리고 있어요</h2><p>유설Seol의 방송 시작을 확인하고 있어요.</p></div><div class="hero-art" aria-hidden="true"><span class="chewing-cat"><svg viewBox="23 13 535 602" preserveAspectRatio="xMidYMax meet"><image href="assets/paused.png" width="581" height="637"/></svg></span></div></div>
+        <div class="hero" data-state="live"><div class="hero-copy"><span class="hero-badge">LIVE</span><h2>유설Seol 방송 중</h2><p>방송을 보러 갈까요?</p></div><div class="hero-art live-mascot-slot" aria-hidden="true"></div></div>
+        <form method="dialog"><button autofocus>닫기</button></form>
+      </dialog>
+      <dialog id="news-group-dialog" aria-labelledby="news-group-title" aria-describedby="news-group-status">
+        <div class="section-heading"><h2 id="news-group-title">디스코드 새 글</h2><form method="dialog"><button autofocus>닫기</button></form></div>
+        <p id="news-group-status" role="status"></p>
+        <ol id="news-group-list" aria-label="최신 글 순서"></ol>
+      </dialog>
+      <dialog id="details-dialog" class="selection-dialog" aria-labelledby="details-title"><div class="section-heading"><h2 id="details-title">확인 안내</h2><form method="dialog"><button>닫기</button></form></div><p id="details-message"></p></dialog>
+      <dialog id="roulette-dialog" aria-labelledby="roulette-title">
+        <div class="section-heading"><h2 id="roulette-title">룰렛 확률표</h2><form method="dialog"><button autofocus>닫기</button></form></div>
+        <div id="roulette-picker" role="radiogroup" aria-label="룰렛 선택" hidden></div>
+        <div id="roulette-participation" hidden>
+          <div class="roulette-keyword-row">
+            <dl class="roulette-keyword-pair">
+              <dt>참여 키워드</dt>
+              <dd id="roulette-keyword"></dd>
+            </dl>
+            <p id="roulette-inactive" role="status" hidden></p>
+            <button id="roulette-copy" type="button" aria-label="참여 키워드 복사" aria-describedby="roulette-keyword" hidden><span aria-hidden="true">복사</span><span class="copy-done" aria-hidden="true">✓ 복사 완료</span></button>
+          </div>
+          <small id="roulette-verified" hidden></small>
+          <small id="roulette-copy-feedback" role="status"></small>
+        </div>
+        <div id="roulette-area">
+          <div id="roulette-scroll" hidden>
+            <table aria-label="선택한 룰렛의 항목별 확률"><thead><tr><th scope="col">항목</th><th scope="col">설정 확률</th></tr></thead><tbody id="roulette-items"></tbody></table>
+          </div>
+          <span id="roulette-loading" role="status" hidden><span class="roulette-spinner" aria-hidden="true"></span>최신 확률 확인 중…</span>
+        </div>
+        <p id="roulette-status" role="status"></p>
+        <div class="roulette-source"><a href="https://chzzk-bot.ddutto.com/viewer/3893acad87cc1d479b9f61f2e732a75a/roulette" target="_blank" rel="noopener noreferrer">뚜봇 원본 보기 ↗</a><small>30초마다 확인</small><button id="roulette-refresh" type="button" disabled>지금 갱신</button></div>
+      </dialog>
+      <dialog id="reset-dialog" aria-labelledby="reset-heading" aria-describedby="reset-preserved">
+        <h2 id="reset-heading">설정을 기본값으로 되돌릴까요?</h2>
+        <dl id="reset-description" class="guide-facts">
+          <dt>자동 추적</dt><dd>켜짐 · 일시 중지 해제</dd>
+          <dt>확인 주기</dt><dd>방송 5분 / <span class="setting-phrase">커뮤니티·디스코드 30분</span></dd>
+          <dt>방송 시작</dt><dd>방송 화면 자동 열기</dd>
+          <dt>알림 켜짐</dt><dd>백그라운드 열기 알림 · <span class="setting-phrase">놓친 방송 알림</span></dd>
+          <dt>화면 모드</dt><dd>Chrome 설정 따르기</dd>
+        </dl>
+        <p id="reset-preserved">최근 활동과 알림·커뮤니티 권한은 유지해요.</p>
+        <form method="dialog"><button value="cancel" autofocus>취소</button><button value="reset" id="confirm-reset">초기화</button></form>
+      </dialog>
+      <footer><a id="channel" target="_blank" rel="noopener noreferrer">유설Seol 채널 ↗</a><div class="feedback-bar"><p id="feedback" class="feedback" role="status" hidden></p><span class="feedback-idle">설정은 바로 적용됩니다</span></div></footer>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "유설Seol 꼬순내 추적기",
+  "version": "1.9.75",
+  "description": "유설Seol의 치지직 라이브 탭을 열고 치지직 커뮤니티와 디스코드의 새 글을 알립니다.",
+  "minimum_chrome_version": "120",
+  "permissions": ["alarms", "storage"],
+  "optional_permissions": ["notifications"],
+  "optional_host_permissions": ["https://apis.naver.com/*"],
+  "host_permissions": [
+    "https://api.chzzk.naver.com/*",
+    "https://chzzk.naver.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "icons": { "16": "icons/icon-16.png", "32": "icons/icon-32.png", "48": "icons/icon-48.png", "128": "icons/icon-128.png" },
+  "action": {
+    "default_title": "유설Seol 꼬순내 추적기",
+    "default_icon": { "16": "icons/icon-16.png", "32": "icons/icon-32.png", "48": "icons/icon-48.png", "128": "icons/icon-128.png" },
+    "default_popup": "popup.html"
+  }
+}
